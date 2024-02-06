@@ -1,0 +1,37 @@
+name: Supa-restore
+on:
+  workflow_dispatch:
+  pull_request:
+    types:
+      - closed
+jobs:
+  run_db_backup:
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
+    name: DB Restore
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      supabase_db_url: ${{ secrets.SUPABASE_DB_URL }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+      - name: Add postgres repo
+        run: sudo sh -c 'echo "deb https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+      - name: Add postgres key
+        run: wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+      - name: Update apt
+        run: sudo apt-get update
+      - name: Install postgresql-client
+        run: sudo apt-get install -y postgresql-client-16
+      - name: Clean all tables
+        run: /usr/lib/postgresql/16/bin/psql -d "$supabase_db_url" -c "DROP SCHEMA chemistry CASCADE;"
+      - name: pg_restore predata
+        run: /usr/lib/postgresql/16/bin/psql -d "$supabase_db_url" -f predata.sql
+      - name: Restore name
+        run: /usr/lib/postgresql/16/bin/pg_restore -l -Fd data  | perl -ln -e '$Z="";' -e 'print qq(mv "data/$3.dat$Z" "data/$1.dat$Z") if /^(\d+);.* TABLE DATA (\S+) (\S+) (\S+)$/' | /bin/bash
+      - name: pg_restore data
+        run: /usr/lib/postgresql/16/bin/pg_restore -d "$supabase_db_url" data
+      - name: pg_restore postdata
+        run: /usr/lib/postgresql/16/bin/psql -d "$supabase_db_url" -f postdata.sql
