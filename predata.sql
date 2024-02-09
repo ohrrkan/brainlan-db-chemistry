@@ -3,7 +3,7 @@
 --
 
 -- Dumped from database version 15.1 (Ubuntu 15.1-1.pgdg20.04+1)
--- Dumped by pg_dump version 16.1 (Ubuntu 16.1-1.pgdg22.04+1)
+-- Dumped by pg_dump version 16.2 (Ubuntu 16.2-1.pgdg22.04+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -121,6 +121,24 @@ CREATE TABLE chemistry.periodic (
 
 
 ALTER TABLE chemistry.periodic OWNER TO postgres;
+
+--
+-- Name: SCHEMA chemistry; Type: ACL; Schema: -; Owner: postgres
+--
+
+GRANT USAGE ON SCHEMA chemistry TO anon;
+GRANT USAGE ON SCHEMA chemistry TO authenticated;
+GRANT USAGE ON SCHEMA chemistry TO service_role;
+
+
+--
+-- Name: TABLE periodic; Type: ACL; Schema: chemistry; Owner: postgres
+--
+
+GRANT ALL ON TABLE chemistry.periodic TO authenticated;
+GRANT ALL ON TABLE chemistry.periodic TO service_role;
+GRANT ALL ON TABLE chemistry.periodic TO anon;
+
 
 --
 -- PostgreSQL database dump complete
