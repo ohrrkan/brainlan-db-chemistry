@@ -123,6 +123,13 @@ CREATE TABLE chemistry.periodic (
 ALTER TABLE chemistry.periodic OWNER TO postgres;
 
 --
+-- Name: COLUMN periodic."Symbol"; Type: COMMENT; Schema: chemistry; Owner: postgres
+--
+
+COMMENT ON COLUMN chemistry.periodic."Symbol" IS 'This is the symbol of the element';
+
+
+--
 -- Name: SCHEMA chemistry; Type: ACL; Schema: -; Owner: postgres
 --
 
